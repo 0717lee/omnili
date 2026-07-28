@@ -34,15 +34,15 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://omnili.site'),
   title: {
     template: '%s — Fengmin',
-    default: 'Fengmin — 独立开发者 & 产品构建者',
+    default: 'Fengmin — 把想法做成产品',
   },
   description:
-    'Fengmin 的个人刊物——实时协作、AI Agent、数据可视化。把想法做成产品。',
+    '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
   creator: 'Fengmin',
   openGraph: {
-    title: 'Fengmin — 独立开发者 & 产品构建者',
+    title: 'Fengmin — 把想法做成产品',
     description:
-      'Fengmin 的个人刊物——实时协作、AI Agent、数据可视化。把想法做成产品。',
+      '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
     type: 'website',
     locale: 'zh_CN',
     siteName: 'Fengmin',
@@ -51,15 +51,15 @@ export const metadata: Metadata = {
         url: '/api/og',
         width: 1200,
         height: 630,
-        alt: 'Fengmin — 独立开发者 & 产品构建者',
+        alt: 'Fengmin — 把想法做成产品',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Fengmin — 独立开发者 & 产品构建者',
+    title: 'Fengmin — 把想法做成产品',
     description:
-      'Fengmin 的个人刊物——实时协作、AI Agent、数据可视化。把想法做成产品。',
+      '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
   },
 };
 

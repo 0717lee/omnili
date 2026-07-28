@@ -5,7 +5,7 @@ import Skills from '@/components/sections/Skills';
 import Contact from '@/components/sections/Contact';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Fengmin — 独立开发者 & 产品构建者' },
+  title: { absolute: 'Fengmin — 把想法做成产品' },
 };
 
 export default function Home() {

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Editorial Studio 刊物风：克莱因蓝底 + 纸白衬线体 F（手工 path，跨平台渲染一致） -->
+  <rect width="64" height="64" fill="#0031C5"/>
+  <!-- 极细内边框，呼应刊物 hairline -->
+  <rect x="3.5" y="3.5" width="57" height="57" fill="none" stroke="#FAF8F3" stroke-opacity="0.28" stroke-width="1"/>
+  <!-- 粗衬线大写 F：顶横带右下垂 serif、中横带端头 serif、底部平展足 serif -->
+  <path fill="#FAF8F3" d="M14 11 L50 11 L50 24 L44.5 24 L44.5 18.5 L31 18.5 L31 28.5 L39.5 28.5 L39.5 26.5 L43.5 26.5 L43.5 37.5 L39.5 37.5 L39.5 35.5 L31 35.5 L31 48.5 L36.5 48.5 L36.5 53 L15 53 L15 48.5 L20 48.5 L20 18.5 L14 18.5 Z"/>
+</svg>

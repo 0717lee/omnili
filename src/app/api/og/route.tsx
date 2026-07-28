@@ -109,7 +109,7 @@ export async function GET(req: NextRequest) {
             color: GRAY,
           }}
         >
-          <div style={{ display: 'flex' }}>FENGMIN — OMNILI.DEV</div>
+          <div style={{ display: 'flex' }}>FENGMIN — OMNILI.SITE</div>
           <div style={{ display: 'flex', color: KLEIN }}>
             {String(projects.length).padStart(2, '0')} WORKS
           </div>
