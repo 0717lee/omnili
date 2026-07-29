@@ -64,9 +64,9 @@ export default function AboutPage() {
               <dt className="font-serif text-base font-semibold text-foreground">
                 {group.category}
               </dt>
-              <dd className="self-center text-sm leading-relaxed text-muted-foreground">
+              <dd className="flex flex-wrap items-baseline gap-y-1 self-center text-sm leading-relaxed text-muted-foreground">
                 {group.items.map((skill, i) => (
-                  <span key={skill}>
+                  <span key={skill} className="whitespace-nowrap">
                     {i > 0 && (
                       <span className="mx-2 text-border" aria-hidden="true">
                         /

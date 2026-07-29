@@ -70,7 +70,7 @@ export default function CopyEmail({
         onClick={handleCopy}
         title={`复制 ${email}`}
         aria-live="polite"
-        className={cn('link-ink relative cursor-pointer', className)}
+        className={cn('link-ink relative cursor-pointer overflow-hidden sm:overflow-visible', className)}
       >
         {children ?? email}
         {/* 复制成功小提示 — 浮在右上角，不改动大字本身 */}

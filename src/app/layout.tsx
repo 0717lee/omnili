@@ -71,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${inter.variable} ${notoSansSC.variable} ${notoSerifSC.variable} ${playfair.variable} h-full antialiased`}
+      className={`${inter.variable} ${notoSansSC.variable} ${notoSerifSC.variable} ${playfair.variable} h-full overflow-x-hidden antialiased`}
     >
       <body id="top" className="min-h-full flex flex-col overflow-x-hidden">
         <ScrollProgress />
@@ -80,7 +80,7 @@ export default function RootLayout({
         <Header />
         {/* Spacer for fixed header (h-16 = 64px) */}
         <div className="h-16 shrink-0" />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-hidden">{children}</main>
         <Footer />
       </body>
     </html>
