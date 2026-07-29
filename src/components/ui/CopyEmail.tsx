@@ -70,14 +70,15 @@ export default function CopyEmail({
         onClick={handleCopy}
         title={`复制 ${email}`}
         aria-live="polite"
-        className={cn('link-ink relative cursor-pointer overflow-hidden sm:overflow-visible', className)}
+        className={cn('link-ink relative cursor-pointer', className)}
       >
         {children ?? email}
-        {/* 复制成功小提示 — 浮在右上角，不改动大字本身 */}
+        {/* 复制成功小提示 — 移动端浮在按钮下方一行，sm 起浮在右上角，均不挤动大字本身 */}
         <span
           aria-hidden={!copied}
           className={cn(
-            'pointer-events-none absolute left-full top-0 ml-3 whitespace-nowrap font-mono text-xs font-normal tracking-[0.15em] text-accent-ink transition-opacity duration-300',
+            'pointer-events-none absolute left-0 top-full mt-2 whitespace-nowrap font-mono text-xs font-normal tracking-[0.15em] text-accent-ink transition-opacity duration-300',
+            'sm:left-full sm:top-0 sm:ml-3 sm:mt-0',
             copied ? 'opacity-100' : 'opacity-0',
           )}
         >
