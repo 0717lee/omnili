@@ -5,6 +5,10 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CursorGlow from "@/components/ui/CursorGlow";
 import ScrollProgress from "@/components/ui/ScrollProgress";
+import { projects } from "@/data/projects";
+
+const projectCount = projects.length;
+const siteDescription = `独立开发者 Fengmin 的个人刊物：${projectCount} 个项目，从实时协作到 AI Agent。写代码像写信。`;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -36,13 +40,11 @@ export const metadata: Metadata = {
     template: '%s — Fengmin',
     default: 'Fengmin — 把想法做成产品',
   },
-  description:
-    '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
+  description: siteDescription,
   creator: 'Fengmin',
   openGraph: {
     title: 'Fengmin — 把想法做成产品',
-    description:
-      '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
+    description: siteDescription,
     type: 'website',
     locale: 'zh_CN',
     siteName: 'Fengmin',
@@ -58,8 +60,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Fengmin — 把想法做成产品',
-    description:
-      '独立开发者 Fengmin 的个人刊物：15 个项目，从实时协作到 AI Agent。写代码像写信。',
+    description: siteDescription,
   },
 };
 
@@ -71,16 +72,18 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${notoSansSC.variable} ${notoSerifSC.variable} ${playfair.variable} h-full overflow-x-hidden antialiased`}
     >
       <body id="top" className="min-h-full flex flex-col overflow-x-hidden">
+        <a href="#main-content" className="skip-link">跳到正文</a>
         <ScrollProgress />
         <CursorGlow />
         <div className="noise-overlay" aria-hidden="true" />
         <Header />
         {/* Spacer for fixed header (h-16 = 64px) */}
         <div className="h-16 shrink-0" />
-        <main className="flex-1 overflow-x-hidden">{children}</main>
+        <main id="main-content" tabIndex={-1} className="flex-1 overflow-x-hidden">{children}</main>
         <Footer />
       </body>
     </html>

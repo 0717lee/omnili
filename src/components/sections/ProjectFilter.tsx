@@ -1,41 +1,51 @@
 'use client';
 
-type FilterType = 'all' | 'web' | 'ai' | 'tool';
+import { filteredProjects, projectFilters, type ProjectFilterValue } from '@/lib/project-filter';
 
 interface ProjectFilterProps {
-  activeFilter: FilterType;
-  onFilterChange: (filter: FilterType) => void;
+  activeFilter: ProjectFilterValue;
+  onFilterChange: (filter: ProjectFilterValue) => void;
 }
-
-const filters: { label: string; value: FilterType }[] = [
-  { label: '全部', value: 'all' },
-  { label: 'Web 应用', value: 'web' },
-  { label: 'AI', value: 'ai' },
-  { label: '工具', value: 'tool' },
-];
 
 export default function ProjectFilter({
   activeFilter,
   onFilterChange,
 }: ProjectFilterProps) {
   return (
-    <div className="flex gap-8 border-b border-border" role="tablist">
-      {filters.map((f) => {
+    <div className="flex gap-2 border-b border-border sm:gap-8" role="tablist" aria-label="按项目类型筛选">
+      {projectFilters.map((f, index) => {
         const active = activeFilter === f.value;
         return (
           <button
             key={f.value}
             type="button"
             role="tab"
+            id={`filter-${f.value}`}
+            data-filter={f.value}
+            aria-controls="project-results"
             aria-selected={active}
+            tabIndex={active ? 0 : -1}
             onClick={() => onFilterChange(f.value)}
-            className={`meta-label -mb-px cursor-pointer border-b pb-3 transition-colors duration-300 ${
+            onKeyDown={(event) => {
+              let nextIndex: number;
+              if (event.key === 'ArrowRight') nextIndex = (index + 1) % projectFilters.length;
+              else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + projectFilters.length) % projectFilters.length;
+              else if (event.key === 'Home') nextIndex = 0;
+              else if (event.key === 'End') nextIndex = projectFilters.length - 1;
+              else return;
+              event.preventDefault();
+              const next = projectFilters[nextIndex];
+              event.currentTarget.parentElement?.querySelector<HTMLButtonElement>(`[data-filter="${next.value}"]`)?.focus();
+              onFilterChange(next.value);
+            }}
+            className={`meta-label -mb-px inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-1.5 border-b-2 px-2 py-3 transition-colors duration-200 ${
               active
-                ? 'border-accent-ink text-foreground'
+                ? 'border-accent-ink font-semibold text-accent-ink'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             {f.label}
+            <span aria-hidden="true" className="text-[0.6875rem] tabular-nums opacity-65">{filteredProjects(f.value).length}</span>
           </button>
         );
       })}

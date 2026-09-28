@@ -3,9 +3,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { projects } from '@/data/projects';
+import { filteredProjects, parseProjectFilter, projectFilterQuery, projectFilters } from '@/lib/project-filter';
 
 interface PageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ category?: string | string[] }>;
 }
 
 export function generateStaticParams() {
@@ -43,19 +45,24 @@ const CATEGORY_LABEL: Record<string, string> = {
   web: 'Web',
   ai: 'AI',
   tool: 'Tool',
-  featured: 'Web',
 };
 
-export default async function ProjectDetailPage({ params }: PageProps) {
+export default async function ProjectDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const projectIndex = projects.findIndex((p) => p.id === id);
   const project = projects[projectIndex];
 
   if (!project) notFound();
 
-  const prevProject = projectIndex > 0 ? projects[projectIndex - 1] : null;
+  const requestedFilter = parseProjectFilter((await searchParams).category);
+  const filter = requestedFilter === project.category ? requestedFilter : 'all';
+  const navigationProjects = filteredProjects(filter);
+  const navigationIndex = navigationProjects.findIndex((item) => item.id === id);
+  const query = projectFilterQuery(filter);
+  const filterLabel = projectFilters.find((item) => item.value === filter)!.label;
+  const prevProject = navigationIndex > 0 ? navigationProjects[navigationIndex - 1] : null;
   const nextProject =
-    projectIndex < projects.length - 1 ? projects[projectIndex + 1] : null;
+    navigationIndex < navigationProjects.length - 1 ? navigationProjects[navigationIndex + 1] : null;
 
   const externalLinks = [
     project.links.demo && { label: '在线演示 ↗', href: project.links.demo },
@@ -67,8 +74,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
       {/* 返回索引 */}
-      <Link href="/projects" className="link-ink meta-label text-muted-foreground">
-        ← 返回索引
+      <Link href={`/projects${query}`} className="link-ink meta-label text-muted-foreground">
+        ← {filter === 'all' ? '返回全部作品' : `返回 ${filterLabel} 项目`}
       </Link>
 
       {/* 刊头元信息行 */}
@@ -84,7 +91,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       {/* 大标题 — 衬线 */}
-      <h1 className="mt-8 font-serif font-semibold leading-[1.1] text-foreground [font-size:clamp(2.5rem,6vw,4.5rem)]">
+      <h1 className="mt-8 break-words font-serif font-semibold leading-[1.15] text-foreground [font-size:clamp(2.25rem,6vw,4.5rem)]">
         {project.title}
       </h1>
       <p className="mt-4 font-serif text-lg italic text-muted-foreground">
@@ -131,7 +138,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">—</p>
+            <p className="text-sm text-muted-foreground">暂未公开链接</p>
           )}
         </div>
       </div>
@@ -186,9 +193,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       {/* 上一篇 / 下一篇 */}
-      <nav className="mt-16 grid grid-cols-2 border-t border-border pt-8">
+      <nav aria-label="浏览同类项目" className="mt-16 grid grid-cols-2 gap-6 border-t border-border pt-8">
         {prevProject ? (
-          <Link href={`/projects/${prevProject.id}`} className="group flex flex-col gap-2">
+          <Link href={`/projects/${prevProject.id}${query}`} className="group flex min-w-0 flex-col gap-2 break-words">
             <span className="meta-label text-muted-foreground">← 上一个</span>
             <span className="font-serif text-lg font-semibold text-foreground transition-colors group-hover:text-accent-ink">
               {prevProject.title}
@@ -199,8 +206,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         )}
         {nextProject ? (
           <Link
-            href={`/projects/${nextProject.id}`}
-            className="group flex flex-col items-end gap-2 text-right"
+            href={`/projects/${nextProject.id}${query}`}
+            className="group flex min-w-0 flex-col items-end gap-2 break-words text-right"
           >
             <span className="meta-label text-muted-foreground">下一个 →</span>
             <span className="font-serif text-lg font-semibold text-foreground transition-colors group-hover:text-accent-ink">

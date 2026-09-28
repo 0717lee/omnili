@@ -15,9 +15,16 @@ export default function ScrollProgress() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+    const observer = new ResizeObserver(handleScroll);
+    observer.observe(document.body);
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
-  return <div ref={barRef} className="scroll-progress w-full" />;
+  return <div ref={barRef} aria-hidden="true" className="scroll-progress w-full" />;
 }

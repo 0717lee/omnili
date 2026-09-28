@@ -5,7 +5,7 @@ export interface Project {
   description: string;
   detail: string;
   techStack: string[];
-  category: 'featured' | 'web' | 'ai' | 'tool';
+  category: 'web' | 'ai' | 'tool';
   links: {
     demo?: string;
     github?: string;

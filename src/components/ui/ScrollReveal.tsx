@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -14,35 +14,42 @@ export default function ScrollReveal({
   className = '',
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+          el.dataset.reveal = 'visible';
           observer.unobserve(el);
         }
       },
       { threshold: 0.15 }
     );
 
-    observer.observe(el);
-    return () => observer.disconnect();
+    const prepareReveal = () => {
+      observer.disconnect();
+      delete el.dataset.reveal;
+      if (motion.matches || el.getBoundingClientRect().top < window.innerHeight) return;
+      el.dataset.reveal = 'pending';
+      observer.observe(el);
+    };
+    prepareReveal();
+    motion.addEventListener('change', prepareReveal);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener('change', prepareReveal);
+    };
   }, []);
 
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s ease-out ${delay}ms`,
-      }}
+      className={['scroll-reveal', className].filter(Boolean).join(' ')}
+      style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
     </div>

@@ -67,7 +67,7 @@ export default function Hero() {
             >
               <Link
                 href="#works"
-                className="link-ink text-sm font-medium text-foreground"
+                className="link-ink inline-flex min-h-11 items-center text-sm font-medium text-foreground"
               >
                 查看作品 ↓
               </Link>
@@ -76,7 +76,7 @@ export default function Hero() {
                   href={profile.social.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-ink text-sm font-medium text-foreground"
+                  className="link-ink inline-flex min-h-11 items-center text-sm font-medium text-foreground"
                 >
                   GitHub ↗
                 </a>

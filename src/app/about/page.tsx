@@ -92,7 +92,8 @@ export default function AboutPage() {
           <br />
           邮件聊想法。
         </h2>
-        <div className="mt-10 flex items-center gap-10">
+        {profile.social.email && <p className="mt-6 select-all break-all text-base text-muted-foreground">{profile.social.email}</p>}
+        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-6">
           {profile.social.github && (
             <a
               href={profile.social.github}
@@ -101,6 +102,11 @@ export default function AboutPage() {
               className="link-ink meta-label text-muted-foreground"
             >
               GitHub ↗
+            </a>
+          )}
+          {profile.social.email && (
+            <a href={`mailto:${profile.social.email}`} className="link-ink meta-label text-foreground">
+              直接发邮件 ↗
             </a>
           )}
           {profile.social.email && (

@@ -1,33 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { projects, type Project } from '@/data/projects';
+import { useEffect, useState } from 'react';
+import { projects } from '@/data/projects';
 import Container from '@/components/layout/Container';
 import ProjectIndexList from '@/components/project/ProjectIndexList';
 import ProjectFilter from '@/components/sections/ProjectFilter';
-import ScrollReveal from '@/components/ui/ScrollReveal';
+import { filteredProjects, parseProjectFilter, projectFilterQuery, type ProjectFilterValue } from '@/lib/project-filter';
 
-type FilterType = 'all' | 'web' | 'ai' | 'tool';
+export default function ProjectsClient({ initialFilter }: { initialFilter: ProjectFilterValue }) {
+  const [activeFilter, setActiveFilter] = useState(initialFilter);
+  const filtered = filteredProjects(activeFilter);
 
-function filterProjects(filter: FilterType): Project[] {
-  switch (filter) {
-    case 'all':
-      return projects;
-    case 'web':
-      return projects.filter((p) => p.category === 'web' || p.category === 'featured');
-    case 'ai':
-      return projects.filter((p) => p.category === 'ai');
-    case 'tool':
-      return projects.filter((p) => p.category === 'tool');
-  }
-}
+  useEffect(() => {
+    const syncFilter = () => setActiveFilter(parseProjectFilter(new URL(window.location.href).searchParams.get('category')));
+    window.addEventListener('popstate', syncFilter);
+    return () => window.removeEventListener('popstate', syncFilter);
+  }, []);
 
-export default function ProjectsClient() {
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
-  const filtered = filterProjects(activeFilter);
+  const changeFilter = (filter: ProjectFilterValue) => {
+    if (filter === activeFilter) return;
+    setActiveFilter(filter);
+    window.history.pushState(null, '', `/projects${projectFilterQuery(filter)}`);
+  };
 
   return (
-    <Container as="section" className="py-14 md:py-20">
+    <Container as="section" className="py-12 md:py-20">
       {/* 页面头部 — 索引扉页 */}
       <div className="mb-4 flex items-baseline gap-6">
         <span className="meta-label text-accent-ink">Index — All Works</span>
@@ -39,20 +36,22 @@ export default function ProjectsClient() {
       <h1 className="font-serif text-4xl font-semibold text-foreground md:text-5xl">
         全部作品
       </h1>
-      <p className="mt-4 max-w-md font-serif text-sm italic leading-relaxed text-muted-foreground">
+      <p className="mt-4 max-w-xl font-serif text-base italic leading-relaxed text-muted-foreground">
         Web 应用、AI Agent、开发工具——每一个都是一次认真的实验。
       </p>
 
       {/* 文字式 tab 筛选 */}
       <div className="mt-12">
-        <ProjectFilter activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+        <ProjectFilter activeFilter={activeFilter} onFilterChange={changeFilter} />
       </div>
 
+      <p className="mt-4 text-sm text-muted-foreground" role="status" aria-live="polite" aria-atomic="true">
+        显示 {filtered.length} 个项目，共 {projects.length} 个
+      </p>
+
       {/* 编辑式索引列表 */}
-      <div className="mt-10">
-        <ScrollReveal key={activeFilter}>
-          <ProjectIndexList projects={filtered} />
-        </ScrollReveal>
+      <div id="project-results" role="tabpanel" aria-labelledby={`filter-${activeFilter}`} tabIndex={0} className="project-results mt-6">
+        <ProjectIndexList key={activeFilter} projects={filtered} filter={activeFilter} />
       </div>
 
       {filtered.length === 0 && (

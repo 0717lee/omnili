@@ -19,9 +19,7 @@ export async function GET(req: NextRequest) {
 
   const title = project ? project.title : 'Fengmin';
   const subtitle = project ? project.subtitle : '独立开发者 & 产品构建者';
-  const description = project
-    ? project.description
-    : '实时协作、AI Agent、数据可视化。把想法做成产品。';
+  const description = '实时协作、AI Agent、数据可视化。把想法做成产品。';
 
   return new ImageResponse(
     (

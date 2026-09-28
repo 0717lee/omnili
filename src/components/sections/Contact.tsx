@@ -22,17 +22,16 @@ export default function Contact() {
             有个想法？
             <br />
             {social.email ? (
-              <CopyEmail email={social.email} feedback="hint">
-                聊聊
-              </CopyEmail>
+              <a href={`mailto:${social.email}`} className="link-ink">发封邮件</a>
             ) : (
               '聊聊'
             )}
             <span aria-hidden="true"> →</span>
           </h2>
+          {social.email && <p className="mt-6 select-all break-all text-base text-muted-foreground">{social.email}</p>}
 
           {/* 底部小字链接 */}
-          <div className="mt-16 flex items-center gap-10">
+          <div className="mt-16 flex flex-wrap items-center gap-x-8 gap-y-6">
             {social.github && (
               <a
                 href={social.github}

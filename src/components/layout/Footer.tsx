@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="mt-auto border-t border-border">
       <Container className="flex items-center justify-between py-6">
         <p className="meta-label text-muted-foreground">Fengmin — 2026</p>
-        <a href="#top" className="meta-label link-ink text-muted-foreground">
+        <a href="#top" className="meta-label link-ink inline-flex min-h-11 items-center text-muted-foreground">
           Back to top ↑
         </a>
       </Container>

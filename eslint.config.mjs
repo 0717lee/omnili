@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated local tooling, also excluded from version control.
+    ".qoder/**",
+    ".vercel-tmp/**",
   ]),
 ]);
 

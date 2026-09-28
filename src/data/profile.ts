@@ -2,7 +2,6 @@ export interface Profile {
   name: string;
   title: string;
   bio: string;
-  avatar?: string;
   skills: {
     category: string;
     items: string[];

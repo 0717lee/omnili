@@ -1,106 +1,107 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Check, Copy, LoaderCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CopyEmailProps {
   email: string;
   className?: string;
-  children?: ReactNode;
-  /**
-   * 复制成功后的反馈模式：
-   * - replace：文字整体替换为「已复制 ✓」（默认，适合小的邮箱地址链接）
-   * - hint：内容保持不变，在右上角浮现小提示「邮箱已复制 ✓」（适合大字场景）
-   */
-  feedback?: 'replace' | 'hint';
 }
 
 /** 兜底方案：clipboard API 不可用时用隐藏 textarea + execCommand */
 function fallbackCopy(text: string): boolean {
+  const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  const textarea = document.createElement('textarea');
   try {
-    const textarea = document.createElement('textarea');
     textarea.value = text;
     textarea.setAttribute('readonly', '');
     textarea.style.position = 'fixed';
     textarea.style.opacity = '0';
     document.body.appendChild(textarea);
     textarea.select();
-    const ok = document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return ok;
+    return document.execCommand('copy');
   } catch {
     return false;
+  } finally {
+    textarea.remove();
+    previousFocus?.focus({ preventScroll: true });
   }
 }
 
 export default function CopyEmail({
   email,
   className,
-  children,
-  feedback = 'replace',
 }: CopyEmailProps) {
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'copying' | 'copied' | 'error'>('idle');
   const timerRef = useRef<number | null>(null);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     };
   }, []);
 
-  const handleCopy = useCallback(async () => {
+  const handleCopy = async () => {
+    if (status === 'copying') return;
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    setStatus('copying');
     let ok = false;
     try {
       await navigator.clipboard.writeText(email);
       ok = true;
     } catch {
+      if (!mountedRef.current) return;
       ok = fallbackCopy(email);
     }
-    if (!ok) return;
+    if (!mountedRef.current) return;
+    if (!ok) {
+      setStatus('error');
+      return;
+    }
 
-    setCopied(true);
-    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => setCopied(false), 2000);
-  }, [email]);
+    setStatus('copied');
+    timerRef.current = window.setTimeout(() => setStatus('idle'), 2500);
+  };
 
-  if (feedback === 'hint') {
-    return (
+  const message = status === 'copying'
+    ? '正在复制邮箱…'
+    : status === 'copied'
+      ? '已复制，可粘贴到邮件中。'
+      : status === 'error' ? '复制未成功，可重试或发邮件。' : '';
+
+  return (
+    <span className="relative inline-flex align-baseline">
       <button
         type="button"
         onClick={handleCopy}
         title={`复制 ${email}`}
-        aria-live="polite"
-        className={cn('link-ink relative cursor-pointer', className)}
+        aria-label={`复制邮箱 ${email}`}
+        aria-busy={status === 'copying'}
+        disabled={status === 'copying'}
+        className={cn(
+          'link-ink inline-flex min-h-11 min-w-28 cursor-pointer items-center justify-center gap-2 disabled:cursor-wait',
+          className,
+          status === 'copied' && 'text-accent-ink',
+        )}
       >
-        {children ?? email}
-        {/* 复制成功小提示 — 移动端浮在按钮下方一行，sm 起浮在右上角，均不挤动大字本身 */}
-        <span
-          aria-hidden={!copied}
-          className={cn(
-            'pointer-events-none absolute left-0 top-full mt-2 whitespace-nowrap font-mono text-xs font-normal tracking-[0.15em] text-accent-ink transition-opacity duration-300',
-            'sm:left-full sm:top-0 sm:ml-3 sm:mt-0',
-            copied ? 'opacity-100' : 'opacity-0',
-          )}
-        >
-          邮箱已复制 ✓
-        </span>
+        {status === 'copying' ? <LoaderCircle aria-hidden="true" className="h-4 w-4 motion-safe:animate-spin" />
+          : status === 'copied' ? <Check aria-hidden="true" className="h-4 w-4" />
+          : <Copy aria-hidden="true" className="h-4 w-4" />}
+        {status === 'copied' ? '已复制' : status === 'copying' ? '复制中…' : status === 'error' ? '重试复制' : '复制邮箱'}
       </button>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      title={`复制 ${email}`}
-      aria-live="polite"
-      className={cn(
-        'link-ink cursor-pointer',
-        copied && 'text-accent-ink',
-        className,
-      )}
-    >
-      {copied ? '已复制 ✓' : (children ?? email)}
-    </button>
+      <span
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="copy-feedback pointer-events-none absolute left-0 top-full mt-2 whitespace-nowrap font-sans text-xs font-normal normal-case leading-5 tracking-normal text-accent-ink"
+        data-state={status}
+      >
+        {message}
+      </span>
+    </span>
   );
 }
